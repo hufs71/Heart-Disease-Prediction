@@ -23,7 +23,7 @@ from IPython.display import Image
 
 
 
-# Preprocess data
+# Preprocess the data
 def get_preprocessed(df):
 
     # _MICHD
