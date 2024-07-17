@@ -54,6 +54,7 @@
 - AIF360 reweighing 알고리즘을 적용하여, 연령 편향을 완화하는 공정성 모델(Fair Model) 구축
 - Fair model 에서 고연령대의 정확도가 미세하게 향상
 - 이는 모델의 연령 편향 문제에 대한 초기 접근이 일부 효과를 보였음을 시사
+
       <img src="https://github.com/user-attachments/assets/a852fd2b-325d-49dc-ab8d-98a3c44a246a" alt="설명" width="500"/>
 ### 4-3. More Advanced Model
 - StratifiedShuffleSplit 기법을 적용하여, 모델이 특정 연령대에 과적합되거나 편향되는 것을 방지한다.
