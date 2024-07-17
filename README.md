@@ -39,7 +39,7 @@
 - 질병 진단 모델이므로 recall이 가장 높은 모델을 선택하고자 했으나, 해당 모델의 다른 수치들이 전체 모델 평균에 비해 매우 떨어지는 문제 발생 (그림: Recall이 0.95 이상인 모델의 평가지표)
 ![그림1](https://github.com/user-attachments/assets/c85d8701-fa22-45a4-af94-210f28ed656e)
 - 따라서 최소 기준을 선정하여 Recall 이 0.8 이상이면서 Precision 이 0.2 이상인 모델 선별
-- 그 중 Recall 이 높은 Logistic Regression 모델, 나머지 수치가 모두 높은 LightGBM 모델을 두 Baseline model로 선정
+- 그 중 Recall 이 가장 높은 Logistic Regression 모델, 나머지 수치가 모두 가장 높은 LightGBM 모델을 두 Baseline model로 선정
 ![그림2](https://github.com/user-attachments/assets/05fa0f82-7c7d-4b49-bc09-b01e0d4ba289)
 #### Baseline Model 평가 및 분석
 
