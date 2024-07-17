@@ -1,239 +1,170 @@
-import warnings
-warnings.filterwarnings('ignore')
-
-from sklearn.model_selection import train_test_split
-
-# Sampling methods
-from imblearn.over_sampling import SMOTE, ADASYN, BorderlineSMOTE, SVMSMOTE
-from imblearn.combine import SMOTETomek, SMOTEENN
-from imblearn.under_sampling import TomekLinks, RandomUnderSampler
-
-# Algorithms
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
-from lightgbm import LGBMClassifier
-from xgboost import XGBClassifier
-
-# Performance metrics
-from sklearn.metrics import (accuracy_score, precision_score, recall_score, 
-                            f1_score, roc_auc_score)
-
-import pandas as pd
-from IPython.display import Image
-
-
-
-# Preprocess the data
+# 데이터 전처리
+# 양성은 1, 음성은 0으로 통일
+# 모름, 응답거부 제거
 def get_preprocessed(df):
 
     # _MICHD
-    #Change 2 to 0 because this means did not have MI or CHD
+    # 심장질환 음성: 2 -> 0 
     df['_MICHD'] = df['_MICHD'].replace({2: 0})
 
 
-    #1 _RFHYPE6
-    #Change 1 to 0 so it represetnts No high blood pressure and 2 to 1 so it represents high blood pressure
+    # _RFHYPE6, 고혈압 여부
+    # 음성: 1 -> 0
+    # 양성: 2 -> 1
     df['_RFHYPE6'] = df['_RFHYPE6'].replace({1:0, 2:1})
     df = df[df._RFHYPE6 != 9]
 
 
-    #2 TOLDHI3
-    # Change 2 to 0 because it is No
-    # Remove all 7 (dont knows)
-    # Remove all 9 (refused)
+    # TOLDHI3, 고콜레스테롤 여부
+    # No: 2 -> 0 
+    # 모름: 7 제거
+    # 응답거부: 9 제거
     df['TOLDHI3'] = df['TOLDHI3'].replace({2:0})
     df = df[df.TOLDHI3 != 7]
     df = df[df.TOLDHI3 != 9]
 
 
-    #3 CHOLCHK3
-    # Change 1 to 0 and 8 to 0 for Not checked cholesterol in past 5 years
-    # Remove 7
-    # Remove 9
+    # CHOLCHK3, 최근 콜레스테롤 수치 검사 여부
+    # 지난 5년간 검사한 적 없음: 1 -> 0, 8 -> 0 
+    # 모름: 7 제거
+    # 응답거부: 9 제거
     df['CHOLCHK3'] = df['CHOLCHK3'].replace({1:0,2:1,3:1,4:1,5:1,6:1,8:0})
     df = df[df.CHOLCHK3 != 7]
     df = df[df.CHOLCHK3 != 9]
 
 
-    #4 _BMI5 (no changes, just note that these are BMI * 100. So for example a BMI of 4018 is really 40.18)
+    # _BMI5, 체질량지수(BMI)
+    # 네 자리 숫자로 기록되어 있으므로 100을 곱한 후 정수 변환
     df['_BMI5'] = df['_BMI5'].div(100).round(0)
 
 
-    #5 SMOKE100
-    # Change 2 to 0 because it is No
-    # Remove all 7 (dont knows)
-    # Remove all 9 (refused)
+    # SMOKE100, 흡연 여부
+    # No: 2 -> 0 
+    # 모름: 7 제거
+    # 응답거부: 9 제거
     df['SMOKE100'] = df['SMOKE100'].replace({2:0})
     df = df[df.SMOKE100 != 7]
     df = df[df.SMOKE100 != 9]
 
 
-    #6 CVDSTRK3
-    # Change 2 to 0 because it is No
-    # Remove all 7 (dont knows)
-    # Remove all 9 (refused)
+    #6 CVDSTRK3, 뇌졸중 여부
+    # No: 2 -> 0
+    # 모름: 7 제거
+    # 응답거부: 9 제거
     df['CVDSTRK3'] = df['CVDSTRK3'].replace({2:0})
     df = df[df.CVDSTRK3 != 7]
     df = df[df.CVDSTRK3 != 9]
 
 
-    #7 DIABETE4
-    # going to make this ordinal. 0 is for no diabetes or only during pregnancy, 1 is for pre-diabetes or borderline diabetes
-    # Remove all 7 (dont knows)
-    # Remove all 9 (refused)
+    # DIABETE4, 당뇨병 여부
+    # 당뇨병 음성이거나 임신시에만 걸렸던 경우: 0 
+    # 당뇨병 양성, 당뇨 전 단계, borderline diabetes: 1 
+    # 모름: 7 제거
+    # 응답거부: 9 제거
     df['DIABETE4'] = df['DIABETE4'].replace({2:0, 3:0, 4:1})
     df = df[df.DIABETE4 != 7]
     df = df[df.DIABETE4 != 9]
 
 
-    #8 _TOTINDA
-    # 1 for physical activity
-    # change 2 to 0 for no physical activity
-    # Remove all 9 (don't know/refused)
+    # _TOTINDA, 신체활동 수준
+    # 신체활동 함: 1
+    # 신체활동 안함: 2 -> 0 
+    # 모름/응답거부: 9 제거
     df['_TOTINDA'] = df['_TOTINDA'].replace({2:0})
     df = df[df._TOTINDA != 9]
 
 
-    #9 _FRTLT1A
-    # Change 2 to 0. this means no fruit consumed per day. 1 will mean consumed 1 or more pieces of fruit per day
-    # remove all dont knows and missing 9
+    # _FRTLT1A, 과일 섭취 수준
+    # 일일 과일 섭취 없음: 2 -> 0
+    # 모름/결측치: 9 제거
     df['_FRTLT1A'] = df['_FRTLT1A'].replace({2:0})
     df = df[df._FRTLT1A != 9]
 
 
-    #10 _VEGLT1A
-    # Change 2 to 0. this means no vegetables consumed per day. 1 will mean consumed 1 or more pieces of vegetable per day
-    # remove all dont knows and missing 9
+    # _VEGLT1A, 채소 섭취 수준
+    # 일일 채소 섭취 없음: 2 -> 0
+    # 모름/결측치: 9 제거
     df['_VEGLT1A'] = df['_VEGLT1A'].replace({2:0})
     df = df[df._VEGLT1A != 9]
 
 
-    #11 _RFDRHV7
-    # Change 1 to 0 (1 was no for heavy drinking). change all 2 to 1 (2 was yes for heavy drinking)
-    # remove all dont knows and missing 9
+    # _RFDRHV7, 과도한 음주 여부
+    # Yes: 2 -> 1
+    # No: 1 -> 0
+    # 모름/결측치: 9 제거
     df['_RFDRHV7'] = df['_RFDRHV7'].replace({1:0, 2:1})
     df = df[df._RFDRHV7 != 9]
 
 
-    #12 _HLTHPLN
-    # 1 is yes, change 2 to 0 because it is No health care access
-    # remove 9 for don't know or refused
+    # _HLTHPLN, 의료보험 가입 여부
+    # No: 2 -> 0
+    # 모름/응답거부: 9 제거
     df['_HLTHPLN'] = df['_HLTHPLN'].replace({2:0})
     df = df[df._HLTHPLN != 9]
 
 
-    #13 MEDCOST1
-    # Change 2 to 0 for no, 1 is already yes
-    # remove 7 for don/t know and 9 for refused
+    # MEDCOST1, 의료비 부담 여부
+    # No: 2 -> 0
+    # 모름: 7 제거
+    # 응답거부: 9 제거
     df['MEDCOST1'] = df['MEDCOST1'].replace({2:0})
     df = df[df.MEDCOST1 != 7]
     df = df[df.MEDCOST1 != 9]
 
 
-    #14 GENHLTH
-    # This is an ordinal variable that I want to keep (1 is Excellent -> 5 is Poor)
-    # Remove 7 and 9 for don't know and refused
+    # GENHLTH, 전반적인 건강 상태
+    # 모름: 7 제거
+    # 응답거부: 9 제거
     df = df[df.GENHLTH != 7]
     df = df[df.GENHLTH != 9]
 
 
-    #15 MENTHLTH
-    # already in days so keep that, scale will be 0-30
-    # change 88 to 0 because it means none (no bad mental health days)
-    # remove 77 and 99 for don't know not sure and refused
+    # MENTHLTH, 정신건강 상태
+    # no bad mental health days: 88 -> 0
+    # 모름: 77 제거
+    # 응답거부: 99 제거
     df['MENTHLTH'] = df['MENTHLTH'].replace({88:0})
     df = df[df.MENTHLTH != 77]
     df = df[df.MENTHLTH != 99]
 
 
-    #16 PHYSHLTH
-    # already in days so keep that, scale will be 0-30
-    # change 88 to 0 because it means none (no bad mental health days)
-    # remove 77 and 99 for don't know not sure and refused
+    # PHYSHLTH, 신체건강 상태
+    # no bad physical health days: 88 -> 0
+    # 모름: 77 제거
+    # 응답거부: 99 제거
     df['PHYSHLTH'] = df['PHYSHLTH'].replace({88:0})
     df = df[df.PHYSHLTH != 77]
     df = df[df.PHYSHLTH != 99]
 
 
-    #17 DIFFWALK
-    # change 2 to 0 for no. 1 is already yes
-    # remove 7 and 9 for don't know not sure and refused
+    # DIFFWALK, 걷기 어려움 여부
+    # No: 2 -> 0
+    # 모름: 7 제거
+    # 응답거부: 9 제거
     df['DIFFWALK'] = df['DIFFWALK'].replace({2:0})
     df = df[df.DIFFWALK != 7]
     df = df[df.DIFFWALK != 9]
 
 
-    #18 _SEX
-    # in other words - is respondent male (somewhat arbitrarily chose this change because men are at higher risk for heart disease)
-    # change 2 to 0 (female as 0). Male is 1
+    # _SEX, 성별
+    # Female: 2 -> 0
     df['_SEX'] = df['_SEX'].replace({2:0})
 
 
-    #19 _AGEG5YR
-    # already ordinal. 1 is 18-24 all the way up to 13 wis 80 and older. 5 year increments.
-    # remove 14 because it is don't know or missing
+    # _AGEG5YR, 연령대
+    # 모름/결측치: 14 제거
     df = df[df._AGEG5YR != 14]
 
 
-    #20 EDUCA
-    # This is already an ordinal variable with 1 being never attended school or kindergarten only up to 6 being college 4 years or more
-    # Scale here is 1-6
-    # Remove 9 for refused:
+    # EDUCA, 교육 수준
+    # 응답거부: 9 제거
     df = df[df.EDUCA != 9]
 
 
-    #21 INCOME3
-    # Variable is already ordinal with 1 being less than $10,000 all the way up to 8 being $75,000 or more
-    # Remove 77 and 99 for don't know and refused
+    # INCOME3, 가구 소득 수준
+    # 모름: 77 제거
+    # 응답거부: 99 제거
     df = df[df.INCOME3 != 77]
     df = df[df.INCOME3 != 99]
 
-    return df
-
-
-# Get results to a DataFrame
-def results_df(resample_method, X_train, X_test, y_train, y_test):
-
-    # Initialize a dictionary to store model names and model objects
-    models_dict = {}
-
-    model_names = ['m_lr', 'm_dt', 'm_lgbm', 'm_xgb']
-    m_lr = LogisticRegression(random_state=13, class_weight='balanced')
-    m_dt = DecisionTreeClassifier(random_state=13, class_weight='balanced')
-    m_lgbm = LGBMClassifier(random_state=13, scale_pos_weight=10)
-    m_xgb = XGBClassifier(random_state=13, scale_pos_weight=10)
-
-
-    models = [m_lr, m_dt, m_lgbm, m_xgb]
-
-    tmp = []
-    for model, name in zip(models, model_names):
-        model.fit(X_train, y_train)  # Train the model
-        models_dict[name] = model  # Store the trained model in the dictionary
-        
-        pred_train = model.predict(X_train)  # Predictions for the training set
-        pred_test = model.predict(X_test)  # Predictions for the test set
-        
-        # Calculate performance metrics
-        train_accuracy = accuracy_score(y_train, pred_train)
-        precision = precision_score(y_train, pred_train)
-        recall = recall_score(y_train, pred_train)
-        f1 = f1_score(y_train, pred_train)
-        aucc = roc_auc_score(y_train, pred_train)
-
-        acc_test = accuracy_score(y_test, pred_test)
-        pre_test = precision_score(y_test, pred_test)
-        re_test = recall_score(y_test, pred_test)
-        f1_test = f1_score(y_test, pred_test)
-        aucc_test = roc_auc_score(y_test, pred_test)
-
-        # Save results to a DataFrame
-        tmp.append([resample_method, f'{name}_clf_train', train_accuracy, precision, recall, f1, aucc])
-        tmp.append([resample_method, f'{name}_clf_test', acc_test, pre_test, re_test, f1_test, aucc_test])
-        tmp.append(['', '', '', '', '', '', ''])
-
-        col_names = ['resampling', 'model_name', 'accuracy', 'precision', 'recall', 'f1', 'roc_auc']
-        df = pd.DataFrame(tmp, columns=col_names)
-
-    
     return df
