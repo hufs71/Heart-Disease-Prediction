@@ -3,7 +3,7 @@
 Heart-Disease-Prediction/
 │
 ├── data/                     # 전처리된 데이터, Resampled된 데이터
-├── models/                   # 모델
+├── model/                    # 모델
 ├── analysis/                 # 분석 jupyter notebook 및 논문 발표자료
 └── README.md                 # 프로젝트 설명
 ```
