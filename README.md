@@ -30,3 +30,19 @@
 2. `결측치 제거`: ‘응답 없음', ‘모름' 제거
 3. 성능의 개선이 없어, scaler 적용 및 outlier 제거는 진행하지 않음. 
 4. `Resampling`: 클래스 불균형에 따른 모델 성능 저하 방지를 위해, 8가지의 서로 다른 Resampling 기법 사용
+
+## 4. 모델 설계
+### 4-1. Baseline Model
+- 질병 진단 모델이므로 recall이 가장 높은 모델을 선택하고자 했으나, 해당 모델의 다른 수치들이 전체 모델 평균에 비해 매우 떨어지는 문제 발생(그림: Recall이 0.95 이상인 모델의 평가지표)
+![그림1](https://github.com/user-attachments/assets/c85d8701-fa22-45a4-af94-210f28ed656e)
+- 따라서 최소 기준을 선정하여, Recall 이 0.8 이상이면서 Precision 이 0.2 이상인 모델 선별 후,
+- Recall 이 높은 Logistic Regression 모델, 나머지 수치가 모두 높은 LightGBM 모델을 두 최종 모델로 선정
+![그림2](https://github.com/user-attachments/assets/05fa0f82-7c7d-4b49-bc09-b01e0d4ba289)
+#### Baseline Model 평가 및 분석
+
+| ![Alt text 1](https://github.com/user-attachments/assets/0f3541e5-c65c-40eb-8608-400c38e94104) | ![Alt text 2](https://github.com/user-attachments/assets/7574b01a-f157-4e14-b17b-8dd4312d4f49) | ![Alt text 3](https://github.com/user-attachments/assets/2d626108-a525-459f-b65d-260b1548b722) |
+|---------------------|---------------------|---------------------|
+| SHAP summary plot       | 오분류 분석 (정답, 오답)              | 오분류 분석 (FP, FN)         |
+
+
+
