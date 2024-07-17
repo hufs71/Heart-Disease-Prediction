@@ -33,7 +33,7 @@
 
 ## 4. 모델 설계
 ### 4-1. Baseline Model
-- 질병 진단 모델이므로 recall이 가장 높은 모델을 선택하고자 했으나, 해당 모델의 다른 수치들이 전체 모델 평균에 비해 매우 떨어지는 문제 발생(그림: Recall이 0.95 이상인 모델의 평가지표)
+- 질병 진단 모델이므로 recall이 가장 높은 모델을 선택하고자 했으나, 해당 모델의 다른 수치들이 전체 모델 평균에 비해 매우 떨어지는 문제 발생 (그림: Recall이 0.95 이상인 모델의 평가지표)
 ![그림1](https://github.com/user-attachments/assets/c85d8701-fa22-45a4-af94-210f28ed656e)
 - 따라서 최소 기준을 선정하여, Recall 이 0.8 이상이면서 Precision 이 0.2 이상인 모델 선별 후,
 - Recall 이 높은 Logistic Regression 모델, 나머지 수치가 모두 높은 LightGBM 모델을 두 최종 모델로 선정
@@ -44,5 +44,21 @@
 |---------------------|---------------------|---------------------|
 | SHAP summary plot       | 오분류 분석 (정답, 오답)              | 오분류 분석 (FP, FN)         |
 
+- 결과 분석
 
+    - 연령 변수가 모델의 예측에 매우 큰 영향을 미친다.
+    - 데이터의 연령이 높을수록 모델의 정확도가 감소한며, 이는 주로 가짜 양성(False Positive)이 원인이다. 
+    - 따라서, 모델의 성능 지표를 향상시키기 위해 연령 편향 완화를 시도해 볼 가치가 있다.
 
+### 4-2. Advanced Model
+- AIF360 reweighing 알고리즘을 적용하여, 연령 편향을 완화하는 공정성 모델(Fair Model) 구축
+- Fair model 에서 고연령대의 정확도가 미세하게 향상
+- 이는 모델의 연령 편향 문제에 대한 초기 접근이 일부 효과를 보였음을 시사
+      <img src="https://github.com/user-attachments/assets/a852fd2b-325d-49dc-ab8d-98a3c44a246a" alt="설명" width="500"/>
+### 4-3. More Advanced Model
+- StratifiedShuffleSplit 기법을 적용하여, 모델이 특정 연령대에 과적합되거나 편향되는 것을 방지한다.
+- Hyper Parameter 최적화를 통해 성능을 향상시킨다.
+
+| ![최종성능](https://github.com/user-attachments/assets/3b9bfbdb-7cd5-4df9-81e3-88c09598f900) | ![다운로드 (4)](https://github.com/user-attachments/assets/f2c07888-4aaf-43f4-aade-0be124d07d34) | ![x](https://github.com/user-attachments/assets/68b9ad95-2bd1-4644-ae48-dd811c9c59a2)|
+|---------------------|---------------------|---------------------|
+| 최종 성능       |     ROC Curve          |     고연령대 정확도 상승    |
