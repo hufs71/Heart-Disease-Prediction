@@ -1,9 +1,6 @@
 # Heart Disease Prediction
 
 - **초기 프로젝트**
-    - 데이터: 2021 BRFSS Data (SAS Transport Format), https://www.cdc.gov/brfss/annual_data/annual_2021.html
-    - 기술 스택: Python, jupyter notebook
-    - 협업: Slack, Github
     - 일정: 2023.10.23 - 2023.11.22 (1개월)
     - 인원: 3명
 >
@@ -22,6 +19,12 @@
 ## 1. 프로젝트 배경
 1. 전화 설문 빅데이터를 기반으로 개인의 심장질환 발병 위험을 예측할 수 있는 모델의 부재
 2. 전통적인 심장질환 진단 방법의 한계
+
+## 2. 데이터
+- 2021 BRFSS Data (SAS Transport Format), https://www.cdc.gov/brfss/annual_data/annual_2021.html
+- 2021년 미국 질병통제센터(CDC) 주관 행동위험요인 감지시스템(BRFSS) 데이터셋
+- 건강행태 전화 설문조사
+- 컬럼 304개, 약 43만 개 데이터
 
 ## 2. EDA
 - 전체 데이터셋(438,693)과 독립변수 선정 및 결측치 제거 후의 데이터셋(236,378개) 모두에서 심장질환 양성 사례가 8%, 심장질환 음성 사례가 92%를 차지하는 매우 불균형한 데이터
