@@ -69,7 +69,7 @@ Heart-Disease-Prediction/
    <img src="https://github.com/user-attachments/assets/a852fd2b-325d-49dc-ab8d-98a3c44a246a" alt="설명" width="500"/>
 ### 5-3. More Advanced Model
 - StratifiedShuffleSplit 기법을 적용하여, 모델이 특정 연령대에 과적합되거나 편향되는 것을 방지한다.
-- Hyper Parameter 최적화를 통해 성능을 향상시킨다.
+- Hyper Parameter 최적화(Optuna)를 통해 성능을 향상시킨다.
 
 | ![최종성능](https://github.com/user-attachments/assets/3b9bfbdb-7cd5-4df9-81e3-88c09598f900) | ![다운로드 (4)](https://github.com/user-attachments/assets/f2c07888-4aaf-43f4-aade-0be124d07d34) | ![x](https://github.com/user-attachments/assets/68b9ad95-2bd1-4644-ae48-dd811c9c59a2)|
 |---------------------|---------------------|---------------------|
