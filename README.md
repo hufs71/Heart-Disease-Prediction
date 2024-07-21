@@ -2,7 +2,7 @@
 ```
 Heart-Disease-Prediction/
 │
-├── data/                     # 전처리된 데이터, Resampled 데이터
+├── data/                     # 전처리된 데이터
 ├── model/                    # 모델
 ├── analysis/                 # 분석 jupyter notebook 및 논문 발표자료
 ├── utils/                    # 원 데이터 전처리 함수
