@@ -24,26 +24,26 @@ Heart-Disease-Prediction/
 >
 ---
 
-## 1. 프로젝트 배경
+## 프로젝트 배경
 1. 전화 설문 빅데이터를 기반으로 개인의 심장질환 발병 위험을 예측할 수 있는 모델의 부재
 2. 전통적인 심장질환 진단 방법의 한계
 
-## 2. 데이터
+## 데이터
 - 2021 BRFSS Data (SAS Transport Format), https://www.cdc.gov/brfss/annual_data/annual_2021.html
 - 2021년 미국 질병통제센터(CDC) 주관 행동위험요인 감지시스템(BRFSS) 데이터셋
 - 건강행태 전화 설문조사
 - 컬럼 304개, 약 43만 개 데이터
 
-## 3. EDA
+## EDA
 - 전체 데이터셋(438,693개)과 독립변수 선정 및 결측치 제거 후의 데이터셋(236,378개) 모두에서 심장질환 양성 사례가 8%, 심장질환 음성 사례가 92%를 차지하는 매우 불균형한 데이터
-## 4. Feature Engineering
+## Feature Engineering
 1. `독립변수 선정`: 선행 연구를 기반으로, 304개의 컬럼 중 심장질환과 연관성 있는 21개의 독립변수 선택
 2. `결측치 제거`: ‘응답 없음', ‘답변 거부', 결측치 제거
 3. 성능의 개선이 없어, scaler 적용 및 outlier 제거는 진행하지 않음. 
 4. `Resampling`: 클래스 불균형에 따른 모델 성능 저하 방지를 위해, 8가지의 서로 다른 Resampling 기법 사용
 
-## 5. 모델 설계
-### 5-1. Baseline Model
+## 모델 설계
+### 1. Baseline Model
 - 질병 진단 모델이므로 recall이 가장 높은 모델을 선택하고자 했으나, 해당 모델의 다른 수치들이 전체 모델 평균에 비해 매우 떨어지는 문제 발생 (그림: Recall이 0.95 이상인 모델의 평가지표)
 ![그림1](https://github.com/user-attachments/assets/c85d8701-fa22-45a4-af94-210f28ed656e)
 - 따라서 최소 기준을 선정하여 Recall 이 0.8 이상이면서 Precision 이 0.2 이상인 모델 선별
@@ -61,13 +61,13 @@ Heart-Disease-Prediction/
     - 환자 데이터의 연령이 높아질수록 모델의 정확도가 감소하며, 이는 거짓 양성(False Positive) 사례의 증가에 기인한다.
     - 따라서, 모델의 성능 지표를 향상시키기 위해 연령 편향 완화를 시도해 볼 가치가 있다.
 
-### 5-2. Advanced Model
+### 2. Advanced Model
 - AIF360 reweighing 알고리즘을 적용하여, 연령 편향을 완화하는 공정성 모델(Fair Model) 구축
 - Fair model 에서 고연령대의 정확도가 미세하게 향상
 - 이는 모델의 연령 편향 문제에 대한 초기 접근이 일부 효과를 보였음을 시사
 
    <img src="https://github.com/user-attachments/assets/a852fd2b-325d-49dc-ab8d-98a3c44a246a" alt="설명" width="500"/>
-### 5-3. More Advanced Model
+### 3. More Advanced Model
 - StratifiedShuffleSplit 기법을 적용하여, 모델이 특정 연령대에 과적합되거나 편향되는 것을 방지한다.
 - Hyper Parameter 최적화(Optuna)를 통해 성능을 향상시킨다.
 - Hyper Parameter 최적화 후 성능이 가장 높은 **LightGBM 모델**을 최종 모델로 선정
