@@ -1,7 +1,39 @@
-# 데이터 전처리
-# 양성은 1, 음성은 0으로 통일
-# 모름, 응답거부 제거
+import requests
+import zipfile
+import os
+
+def download_and_unzip(url, save_path):
+    '''
+    BRFSS 2021 데이터셋 다운로드 및 압축 해제
+    '''
+    response = requests.get(url)
+    response.raise_for_status()  # 오류 발생하면 예외 발생시킴
+
+    with open(save_path, 'wb') as f:
+        f.write(response.content)
+
+    # 압축 해제
+    with zipfile.ZipFile(save_path, 'r') as zip_ref:
+        zip_ref.extractall('.')
+
+        # 압축 해제된 파일
+        extracted_file = zip_ref.namelist()
+
+    # 파일 이름 끝에 공백 있을시 제거
+    for file_name in extracted_file:
+        new_file_name = file_name.rstrip()  
+        if new_file_name != file_name:
+            os.rename(file_name, new_file_name)
+            print(f'Renamed "{file_name}" to "{new_file_name}"')
+
+
+
 def get_preprocessed(df):
+    '''
+    데이터 전처리
+    양성은 1, 음성은 0으로 통일
+    모름, 응답거부 제거
+    '''
 
     # _MICHD
     # 심장질환 음성: 2 -> 0 
@@ -17,8 +49,8 @@ def get_preprocessed(df):
 
     # TOLDHI3, 고콜레스테롤 여부
     # No: 2 -> 0 
-    # 모름: 7 제거
-    # 응답거부: 9 제거
+    # 모름: 7
+    # 응답거부: 9
     df['TOLDHI3'] = df['TOLDHI3'].replace({2:0})
     df = df[df.TOLDHI3 != 7]
     df = df[df.TOLDHI3 != 9]
@@ -26,8 +58,8 @@ def get_preprocessed(df):
 
     # CHOLCHK3, 최근 콜레스테롤 수치 검사 여부
     # 지난 5년간 검사한 적 없음: 1 -> 0, 8 -> 0 
-    # 모름: 7 제거
-    # 응답거부: 9 제거
+    # 모름: 7
+    # 응답거부: 9
     df['CHOLCHK3'] = df['CHOLCHK3'].replace({1:0,2:1,3:1,4:1,5:1,6:1,8:0})
     df = df[df.CHOLCHK3 != 7]
     df = df[df.CHOLCHK3 != 9]
@@ -40,8 +72,8 @@ def get_preprocessed(df):
 
     # SMOKE100, 흡연 여부
     # No: 2 -> 0 
-    # 모름: 7 제거
-    # 응답거부: 9 제거
+    # 모름: 7
+    # 응답거부: 9
     df['SMOKE100'] = df['SMOKE100'].replace({2:0})
     df = df[df.SMOKE100 != 7]
     df = df[df.SMOKE100 != 9]
@@ -49,8 +81,8 @@ def get_preprocessed(df):
 
     #6 CVDSTRK3, 뇌졸중 여부
     # No: 2 -> 0
-    # 모름: 7 제거
-    # 응답거부: 9 제거
+    # 모름: 7
+    # 응답거부: 9
     df['CVDSTRK3'] = df['CVDSTRK3'].replace({2:0})
     df = df[df.CVDSTRK3 != 7]
     df = df[df.CVDSTRK3 != 9]
@@ -59,8 +91,8 @@ def get_preprocessed(df):
     # DIABETE4, 당뇨병 여부
     # 당뇨병 음성이거나 임신시에만 걸렸던 경우: 0 
     # 당뇨병 양성, 당뇨 전 단계, borderline diabetes: 1 
-    # 모름: 7 제거
-    # 응답거부: 9 제거
+    # 모름: 7
+    # 응답거부: 9
     df['DIABETE4'] = df['DIABETE4'].replace({2:0, 3:0, 4:1})
     df = df[df.DIABETE4 != 7]
     df = df[df.DIABETE4 != 9]
@@ -69,21 +101,21 @@ def get_preprocessed(df):
     # _TOTINDA, 신체활동 수준
     # 신체활동 함: 1
     # 신체활동 안함: 2 -> 0 
-    # 모름/응답거부: 9 제거
+    # 모름/응답거부: 9
     df['_TOTINDA'] = df['_TOTINDA'].replace({2:0})
     df = df[df._TOTINDA != 9]
 
 
     # _FRTLT1A, 과일 섭취 수준
     # 일일 과일 섭취 없음: 2 -> 0
-    # 모름/결측치: 9 제거
+    # 모름/결측치: 9
     df['_FRTLT1A'] = df['_FRTLT1A'].replace({2:0})
     df = df[df._FRTLT1A != 9]
 
 
     # _VEGLT1A, 채소 섭취 수준
     # 일일 채소 섭취 없음: 2 -> 0
-    # 모름/결측치: 9 제거
+    # 모름/결측치: 9
     df['_VEGLT1A'] = df['_VEGLT1A'].replace({2:0})
     df = df[df._VEGLT1A != 9]
 
@@ -91,38 +123,38 @@ def get_preprocessed(df):
     # _RFDRHV7, 과도한 음주 여부
     # Yes: 2 -> 1
     # No: 1 -> 0
-    # 모름/결측치: 9 제거
+    # 모름/결측치: 9
     df['_RFDRHV7'] = df['_RFDRHV7'].replace({1:0, 2:1})
     df = df[df._RFDRHV7 != 9]
 
 
     # _HLTHPLN, 의료보험 가입 여부
     # No: 2 -> 0
-    # 모름/응답거부: 9 제거
+    # 모름/응답거부: 9
     df['_HLTHPLN'] = df['_HLTHPLN'].replace({2:0})
     df = df[df._HLTHPLN != 9]
 
 
     # MEDCOST1, 의료비 부담 여부
     # No: 2 -> 0
-    # 모름: 7 제거
-    # 응답거부: 9 제거
+    # 모름: 7
+    # 응답거부: 9
     df['MEDCOST1'] = df['MEDCOST1'].replace({2:0})
     df = df[df.MEDCOST1 != 7]
     df = df[df.MEDCOST1 != 9]
 
 
     # GENHLTH, 전반적인 건강 상태
-    # 모름: 7 제거
-    # 응답거부: 9 제거
+    # 모름: 7
+    # 응답거부: 9
     df = df[df.GENHLTH != 7]
     df = df[df.GENHLTH != 9]
 
 
     # MENTHLTH, 정신건강 상태
     # no bad mental health days: 88 -> 0
-    # 모름: 77 제거
-    # 응답거부: 99 제거
+    # 모름: 77
+    # 응답거부: 99
     df['MENTHLTH'] = df['MENTHLTH'].replace({88:0})
     df = df[df.MENTHLTH != 77]
     df = df[df.MENTHLTH != 99]
@@ -130,8 +162,8 @@ def get_preprocessed(df):
 
     # PHYSHLTH, 신체건강 상태
     # no bad physical health days: 88 -> 0
-    # 모름: 77 제거
-    # 응답거부: 99 제거
+    # 모름: 77
+    # 응답거부: 99
     df['PHYSHLTH'] = df['PHYSHLTH'].replace({88:0})
     df = df[df.PHYSHLTH != 77]
     df = df[df.PHYSHLTH != 99]
@@ -139,8 +171,8 @@ def get_preprocessed(df):
 
     # DIFFWALK, 걷기 어려움 여부
     # No: 2 -> 0
-    # 모름: 7 제거
-    # 응답거부: 9 제거
+    # 모름: 7
+    # 응답거부: 9
     df['DIFFWALK'] = df['DIFFWALK'].replace({2:0})
     df = df[df.DIFFWALK != 7]
     df = df[df.DIFFWALK != 9]
@@ -152,18 +184,18 @@ def get_preprocessed(df):
 
 
     # _AGEG5YR, 연령대
-    # 모름/결측치: 14 제거
+    # 모름/결측치: 14
     df = df[df._AGEG5YR != 14]
 
 
     # EDUCA, 교육 수준
-    # 응답거부: 9 제거
+    # 응답거부: 9
     df = df[df.EDUCA != 9]
 
 
     # INCOME3, 가구 소득 수준
-    # 모름: 77 제거
-    # 응답거부: 99 제거
+    # 모름: 77
+    # 응답거부: 99
     df = df[df.INCOME3 != 77]
     df = df[df.INCOME3 != 99]
 
