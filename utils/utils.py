@@ -35,7 +35,7 @@ def get_preprocessed(df):
     모름, 응답거부 제거
     '''
 
-    # _MICHD
+    # _MICHD, 심장질환 여부
     # 심장질환 음성: 2 -> 0 
     df['_MICHD'] = df['_MICHD'].replace({2: 0})
 
@@ -79,7 +79,7 @@ def get_preprocessed(df):
     df = df[df.SMOKE100 != 9]
 
 
-    #6 CVDSTRK3, 뇌졸중 여부
+    # CVDSTRK3, 뇌졸중 여부
     # No: 2 -> 0
     # 모름: 7
     # 응답거부: 9
