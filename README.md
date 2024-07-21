@@ -5,7 +5,7 @@ Heart-Disease-Prediction/
 ├── data/                     # 전처리된 데이터
 ├── model/                    # 모델
 ├── analysis/                 # 분석 jupyter notebook 및 논문 발표자료
-├── utils/                    # 원 데이터 전처리 함수
+├── utils/                    # 2021 BRFSS Data 다운로드 및 전처리 함수
 └── README.md                 # 프로젝트 설명
 ```
 - **초기 프로젝트**
