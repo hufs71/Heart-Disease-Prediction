@@ -27,7 +27,7 @@ Heart-Disease-Prediction/
 
 ## 프로젝트 배경
 1. 전화 설문 빅데이터를 기반으로 개인의 심장질환 발병 위험을 예측할 수 있는 모델의 부재
-2. 전통적인 심장질환 진단 방법의 한계
+2. 심장질환의 조기 발견을 통한 예후 개선 가능성
 
 ## 데이터
 - 2021 BRFSS Data (SAS Transport Format), https://www.cdc.gov/brfss/annual_data/annual_2021.html
