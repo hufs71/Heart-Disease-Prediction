@@ -1,4 +1,5 @@
 # Heart Disease Prediction
+전화 설문조사 데이터를 바탕으로, 개인의 심장질환 발병을 예측하는 머신러닝 모델입니다. 
 ```
 Heart-Disease-Prediction/
 │
