@@ -9,6 +9,8 @@ Heart-Disease-Prediction/
 ├── utils/                    # 2021 BRFSS Data 다운로드 및 전처리 함수
 └── README.md                 # 프로젝트 설명
 ```
+## 프로젝트 일정
+### STEP 1. Baseline Model 개발
 - **초기 프로젝트**
     - 일정: 2023.10.23 - 2023.11.22 (1개월)
     - 인원: 3명
@@ -18,6 +20,7 @@ Heart-Disease-Prediction/
     - 인원: 1명
     - 목적: [논문](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE11825454) 작성 및 모델 성능 지표 향상
 >
+### STEP 2. 고도화
 - **2차 보완**
     - 일정: 2024.07.12 - 2024.7.17 (1주일)
     - 인원: 1명
